@@ -8,9 +8,9 @@ const masjid = {
   name: "Mamelodi Islamic Centre",
   tagline: "A welcoming place of worship, learning, and service.",
   location: "Mamelodi, South Africa",
-  phone: "+27 00 000 0000",
-  email: "info@mamelodiislamiccentre.org",
-  address: "Mamelodi, Pretoria, South Africa",
+  phone: "0735963375",
+  email: "tmakgalo@gmail.com",
+  address: "18878 Sibande Street Mamelodi East, Pretoria, 0122",
   banking: {
     bank: "Absa",
     accountName: "Mamelodi Islamic Centre",
@@ -68,11 +68,11 @@ const events = [
 ];
 
 const galleryItems = [
-  { title: "Main prayer hall" },
-  { title: "Community iftar" },
-  { title: "Youth class" },
-  { title: "ECD learning area" },
-  { title: "Charity drive" },
+  { title: "Main prayer hall", image: "/main-prayer-hall.jpg" },
+  { title: "Community iftar", image: "/community-iftar.jpg" },
+  { title: "Youth class", image: "/youth-class.jpg" },
+  { title: "ECD learning area", image: "/ecd-learning-area.jpg" },
+  { title: "Charity drive", image: "/charity-drive.jpg" },
   { title: "Masjid exterior", image: "/masjid-exterior.jpg" },
 ];
 
@@ -150,8 +150,44 @@ function Contact() {
   return <section id="contact" className="bg-emerald-50 px-4 py-20 md:px-8"><div className="mx-auto max-w-7xl"><SectionHeader eyebrow="Contact Us" title="Get in touch with the masjid" text="Use the details below for general enquiries, class registrations, donations, events, or community support." /><div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]"><div className="rounded-3xl bg-white p-8 shadow-lg shadow-emerald-900/5"><div className="space-y-5"><div className="flex gap-4"><Icon className="shrink-0 text-emerald-700">📍</Icon><p>{masjid.address}</p></div><div className="flex gap-4"><Icon className="shrink-0 text-emerald-700">☎</Icon><p>{masjid.phone}</p></div><div className="flex gap-4"><Icon className="shrink-0 text-emerald-700">✉</Icon><p>{masjid.email}</p></div></div></div><form className="rounded-3xl bg-white p-8 shadow-lg shadow-emerald-900/5" onSubmit={(e) => e.preventDefault()}><div className="grid gap-4 md:grid-cols-2"><input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-600" placeholder="Full name" /><input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-600" placeholder="Email address" /></div><input className="mt-4 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-600" placeholder="Subject" /><textarea className="mt-4 min-h-32 w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-600" placeholder="Message" /><button className="mt-4 rounded-2xl bg-emerald-700 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800">Send Message</button></form></div></div></section>;
 }
 
+function GalleryCard({ item, index }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const showPhoto = item.image && !imageFailed;
+  const fileName = item.image?.replace(/^\//, "");
+
+  return (
+    <div className="group relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-100 to-teal-50 shadow-lg shadow-slate-900/5">
+      {showPhoto ? (
+        <img
+          src={item.image}
+          alt={item.title}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-emerald-100 opacity-60" />
+          <div className="relative px-4 text-center">
+            <Icon className="mx-auto mb-3 text-emerald-700">🖼</Icon>
+            <p className="font-bold text-slate-800">{item.title}</p>
+            <p className="mt-1 text-sm text-slate-500">
+              {fileName ? "Add this file to the public folder:" : `Photo ${index + 1}`}
+            </p>
+            {fileName && (
+              <p className="mt-2 rounded-lg bg-white/80 px-3 py-1 font-mono text-xs text-emerald-800">{fileName}</p>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function Gallery() {
-  return <section id="gallery" className="bg-white px-4 py-20 md:px-8"><div className="mx-auto max-w-7xl"><SectionHeader eyebrow="Gallery" title="Moments from our community" text="Replace these placeholders with photos of the masjid, classes, events, Ramadan activities, and community projects." /><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{galleryItems.map((item, index) => <div key={item.title} className="group relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-100 to-teal-50 shadow-lg shadow-slate-900/5">{item.image ? <img src={item.image} alt={item.title} className="h-full w-full object-cover" /> : <><div className="absolute inset-0 bg-emerald-100 opacity-60" /><div className="relative text-center"><Icon className="mx-auto mb-3 text-emerald-700">🖼</Icon><p className="font-bold text-slate-800">{item.title}</p><p className="mt-1 text-sm text-slate-500">Photo {index + 1}</p></div></>}</div>)}</div></div></section>;
+  return <section id="gallery" className="bg-white px-4 py-20 md:px-8"><div className="mx-auto max-w-7xl"><SectionHeader eyebrow="Gallery" title="Moments from our community" /><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{galleryItems.map((item, index) => (
+            <GalleryCard key={item.title} item={item} index={index} />
+          ))}</div></div></section>;
 }
 
 function Footer() {
