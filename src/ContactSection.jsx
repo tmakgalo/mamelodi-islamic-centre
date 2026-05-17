@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { buildWhatsAppMessageUrl, sendContactEmail } from "./lib/contact";
 
-function Icon({ children, className = "" }) {
-  return <span className={`inline-flex items-center justify-center text-2xl ${className}`}>{children}</span>;
-}
-
 function SectionHeader({ eyebrow, title, text }) {
   return (
     <div className="mx-auto mb-10 max-w-3xl text-center">
@@ -52,7 +48,7 @@ export default function ContactSection({ masjid }) {
     if (result.reason === "missing_key") {
       window.open(buildWhatsAppMessageUrl(masjid.whatsapp, form), "_blank", "noopener,noreferrer");
       setStatus("success");
-      setStatusMessage("Email is not configured yet — WhatsApp opened with your message. Tap Send to deliver it.");
+      setStatusMessage("Email is not configured yet - WhatsApp opened with your message. Tap Send to deliver it.");
       return;
     }
 
@@ -76,24 +72,24 @@ export default function ContactSection({ masjid }) {
         <SectionHeader
           eyebrow="Contact Us"
           title="Get in touch with the masjid"
-          text="Send a message below — it goes to our email automatically. You can also reach us on WhatsApp."
+          text="Send a message below - it goes to our email automatically. You can also reach us on WhatsApp."
         />
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-3xl bg-white p-8 shadow-lg shadow-emerald-900/5">
             <div className="space-y-5">
-              <div className="flex gap-4">
-                <Icon className="shrink-0 text-emerald-700">📍</Icon>
-                <p>{masjid.address}</p>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Address</p>
+                <p className="mt-1">{masjid.address}</p>
               </div>
-              <div className="flex gap-4">
-                <Icon className="shrink-0 text-emerald-700">☎</Icon>
-                <a href={`tel:${masjid.phone}`} className="text-emerald-800 hover:underline">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Phone</p>
+                <a href={`tel:${masjid.phone}`} className="mt-1 block text-emerald-800 hover:underline">
                   {masjid.phone}
                 </a>
               </div>
-              <div className="flex gap-4">
-                <Icon className="shrink-0 text-emerald-700">✉</Icon>
-                <a href={`mailto:${masjid.email}`} className="text-emerald-800 hover:underline">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Email</p>
+                <a href={`mailto:${masjid.email}`} className="mt-1 block text-emerald-800 hover:underline">
                   {masjid.email}
                 </a>
               </div>
@@ -157,7 +153,7 @@ export default function ContactSection({ masjid }) {
                 disabled={status === "sending"}
                 className="flex-1 rounded-2xl bg-emerald-700 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
               >
-                {status === "sending" ? "Sending…" : "Send to email"}
+                {status === "sending" ? "Sending..." : "Send to email"}
               </button>
               <button
                 type="button"
