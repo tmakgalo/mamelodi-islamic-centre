@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { masjid } from "./lib/masjid";
 import {
   DONATION_CAUSES,
@@ -48,7 +48,29 @@ function DonateFooter() {
   );
 }
 
-function BankDetails() {
+/** null while checking, then true/false. Any failure counts as "not available". */
+function useOnlinePaymentsEnabled() {
+  const [enabled, setEnabled] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/payfast-status", { headers: { Accept: "application/json" } })
+      .then((response) => (response.ok ? response.json() : { enabled: false }))
+      .then((data) => {
+        if (!cancelled) setEnabled(data.enabled === true);
+      })
+      .catch(() => {
+        if (!cancelled) setEnabled(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return enabled;
+}
+
+function BankDetails({ primary = false }) {
   const [copied, setCopied] = useState(false);
   const { banking } = masjid;
   const rows = [
@@ -72,8 +94,12 @@ function BankDetails() {
 
   return (
     <div className="rounded-3xl bg-white p-7 shadow-lg shadow-emerald-900/5">
-      <h2 className="text-xl font-bold text-slate-950">Prefer a bank transfer?</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">You can also donate directly into the masjid account.</p>
+      <h2 className="text-xl font-bold text-slate-950">{primary ? "Donate by EFT" : "Prefer a bank transfer?"}</h2>
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        {primary
+          ? "Please make your donation by EFT into the masjid account below."
+          : "You can also donate directly into the masjid account."}
+      </p>
       <dl className="mt-4 space-y-2 text-sm">
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-4 border-b border-slate-100 pb-2">
@@ -295,9 +321,20 @@ function Notice({ tone, title, children }) {
   );
 }
 
-export default function DonatePage() {
-  const path = window.location.pathname.replace(/\/+$/, "");
+function OnlineNotLive() {
+  return (
+    <div className="mx-auto mb-8 max-w-2xl rounded-3xl bg-amber-50 p-6 text-center text-amber-900">
+      <h2 className="text-lg font-bold">Online card donations are not live yet</h2>
+      <p className="mt-2 text-sm leading-6">
+        We are setting up secure online payments. Until then, please donate by EFT using the banking details below.
+        JazakAllah khair.
+      </p>
+    </div>
+  );
+}
 
+/** The page content for a given path. `enabled` is true, false, or null while still checking. */
+export function DonateBody({ path, enabled }) {
   let body;
   if (path === "/donate/success") {
     body = (
@@ -323,18 +360,38 @@ export default function DonatePage() {
             Your giving helps maintain the masjid and supports education, welfare, outreach and community programmes.
           </p>
         </div>
-        <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-start">
-          <DonationForm />
-          <BankDetails />
-        </div>
+        {enabled === true && (
+          <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-start">
+            <DonationForm />
+            <BankDetails />
+          </div>
+        )}
+        {enabled === false && (
+          <>
+            <OnlineNotLive />
+            <div className="mx-auto max-w-xl">
+              <BankDetails primary />
+            </div>
+          </>
+        )}
+        {enabled === null && <p className="py-10 text-center text-sm text-slate-500">Loading donation options...</p>}
       </>
     );
   }
 
+  return body;
+}
+
+export default function DonatePage() {
+  const path = window.location.pathname.replace(/\/+$/, "");
+  const enabled = useOnlinePaymentsEnabled();
+
   return (
     <div className="min-h-screen bg-emerald-50 font-sans text-slate-900">
       <DonateHeader />
-      <main className="mx-auto max-w-5xl px-4 py-12 md:px-8 md:py-16">{body}</main>
+      <main className="mx-auto max-w-5xl px-4 py-12 md:px-8 md:py-16">
+        <DonateBody path={path} enabled={enabled} />
+      </main>
       <DonateFooter />
     </div>
   );
