@@ -2,6 +2,7 @@
 import { getDailyPrayers, PRAYER_CONFIG } from "./lib/prayerTimes";
 import { usePrayerTimes } from "./hooks/usePrayerTimes";
 import ContactSection from "./ContactSection";
+import { masjid } from "./lib/masjid";
 
 function LogoMark({ className = "" }) {
   return (
@@ -12,23 +13,6 @@ function LogoMark({ className = "" }) {
     </span>
   );
 }
-
-const masjid = {
-  name: "Mamelodi Islamic Centre",
-  tagline: "A welcoming place of worship, learning, and service.",
-  location: "Mamelodi, South Africa",
-  phone: "0735963375",
-  whatsapp: "0735963375",
-  email: "tmakgalo@gmail.com",
-  address: "18878 Sibande Street Mamelodi East, Pretoria, 0122",
-  banking: {
-    bank: "Absa",
-    accountName: "Mamelodi Islamic Centre",
-    accountNumber: "4061224152",
-    branchCode: "632005",
-    reference: "Donation / Sadaqah / Lillah",
-  },
-};
 
 const navItems = [
   { id: "home", label: "Home" },
@@ -129,6 +113,12 @@ function Navbar() {
               {item.label}
             </button>
           ))}
+          <a
+            href="/donate"
+            className="ml-2 rounded-full bg-emerald-700 px-5 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-900/20 transition hover:bg-emerald-800"
+          >
+            Donate Now
+          </a>
         </nav>
         <button
           onClick={() => setOpen((v) => !v)}
@@ -152,6 +142,12 @@ function Navbar() {
               {item.label}
             </button>
           ))}
+          <a
+            href="/donate"
+            className="mt-2 block w-full rounded-xl bg-emerald-700 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-800"
+          >
+            Donate Now
+          </a>
         </div>
       )}
     </header>
@@ -190,12 +186,12 @@ function Hero({ prayer }) {
             >
               View Salah Times
             </button>
-            <button
-              onClick={() => scrollToSection("donations")}
-              className="rounded-2xl border border-white/30 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
+            <a
+              href="/donate"
+              className="rounded-2xl border border-white/30 px-6 py-3 text-center font-semibold text-white transition hover:bg-white/10"
             >
-              Support the Masjid
-            </button>
+              Donate Now
+            </a>
           </div>
         </div>
         <div className="rounded-[2rem] bg-white/10 p-5 shadow-2xl ring-1 ring-white/20 backdrop-blur">
@@ -359,6 +355,12 @@ function Donations() {
               <p>- Zakaah collection and distribution, where applicable</p>
               <p>- Sponsor ECD, youth, and education programmes</p>
             </div>
+            <a
+              href="/donate"
+              className="mt-6 block rounded-2xl bg-emerald-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-emerald-500"
+            >
+              Donate online now
+            </a>
           </div>
           <div className="rounded-3xl bg-white p-8 text-slate-950 shadow-2xl">
             <h3 className="mb-5 text-2xl font-bold">Banking Details</h3>
