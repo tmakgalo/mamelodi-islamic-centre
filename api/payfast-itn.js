@@ -43,7 +43,7 @@ export default async function handler(req, res) {
   const data = Object.fromEntries(pairs);
   const withoutSignature = pairs.filter(([key]) => key !== "signature");
 
-  if (!data.signature || signPairs(withoutSignature, config.passphrase) !== data.signature) {
+  if (!data.signature || signPairs(withoutSignature, config.passphrase, { keepBlank: true }) !== data.signature) {
     console.warn("PayFast ITN rejected: bad signature", data.m_payment_id);
     return res.status(400).end();
   }
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     console.warn("PayFast ITN rejected: unexpected sender", data.m_payment_id);
     return res.status(400).end();
   }
-  if (!(await confirmWithPayFast(buildParamString(withoutSignature)))) {
+  if (!(await confirmWithPayFast(buildParamString(withoutSignature, { keepBlank: true })))) {
     console.warn("PayFast ITN rejected: PayFast did not confirm", data.m_payment_id);
     return res.status(400).end();
   }

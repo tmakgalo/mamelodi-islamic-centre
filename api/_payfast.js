@@ -89,10 +89,14 @@ function isBlank(value) {
   return value === undefined || value === null || String(value).trim() === "";
 }
 
-/** Build `a=1&b=2` from ordered [key, value] pairs, skipping blanks. */
-export function buildParamString(pairs) {
+/**
+ * Build `a=1&b=2` from ordered [key, value] pairs.
+ * Checkout signatures skip blank values. PayFast's ITN signature is built from every
+ * received field in order, including blank ones, so ITN checks pass keepBlank = true.
+ */
+export function buildParamString(pairs, { keepBlank = false } = {}) {
   return pairs
-    .filter(([, value]) => !isBlank(value))
+    .filter(([, value]) => keepBlank || !isBlank(value))
     .map(([key, value]) => `${key}=${pfEncode(value)}`)
     .join("&");
 }
@@ -101,8 +105,8 @@ export function md5(text) {
   return crypto.createHash("md5").update(text).digest("hex");
 }
 
-export function signPairs(pairs, passphrase) {
-  let paramString = buildParamString(pairs);
+export function signPairs(pairs, passphrase, options) {
+  let paramString = buildParamString(pairs, options);
   if (passphrase) paramString += `&passphrase=${pfEncode(passphrase)}`;
   return md5(paramString);
 }
